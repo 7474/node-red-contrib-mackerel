@@ -1,0 +1,26 @@
+{
+    "name": "node-red-contrib-mackerel",
+    "version": "0.1.0",
+    "description": "A Node-RED node for mackerel.",
+    "node-red": {
+        "nodes": {
+            "mackerel": "mackerel.js"
+        }
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/7474/node-red-contrib-mackerel.git"
+    },
+    "keywords": [
+        "mackerel"
+    ],
+    "author": "koudenpa",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/7474/node-red-contrib-mackerel/issues"
+    },
+    "homepage": "https://github.com/7474/node-red-contrib-mackerel"
+}
