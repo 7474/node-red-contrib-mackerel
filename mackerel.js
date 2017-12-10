@@ -4,17 +4,12 @@ let baseUrl = "https://api.mackerelio.com";
 var request = require('request');
 
 module.exports = function (RED) {
-    function MackerelNode(config) {
+    function MackerelNode(n) {
         RED.nodes.createNode(this, n);
         var node = this;
         var nodePath = n.path;
-        var nodeFollowRedirects = n["follow-redirects"];
         var isTemplatedUrl = (nodePath || "").indexOf("{{") != -1;
         var nodeMethod = n.method || "GET";
-        if (n.tls) {
-            var tlsNode = RED.nodes.getNode(n.tls);
-        }
-        this.ret = n.ret || "txt";
         if (RED.settings.httpRequestTimeout) {
             this.reqTimeout = parseInt(RED.settings.httpRequestTimeout) || 120000;
         } else {
@@ -26,23 +21,23 @@ module.exports = function (RED) {
             node.status({
                 fill: "blue",
                 shape: "dot",
-                text: "httpin.status.requesting"
+                text: "mackerel.status.requesting"
             });
 
-            let path = nodePath || msg.path;
             var url = nodePath || msg.path;
             if (msg.path && nodePath && (nodePath !== msg.path)) { // revert change below when warning is finally removed
                 node.warn(RED._("common.errors.nooverride"));
             }
             if (isTemplatedUrl) {
-                url = mustache.render(nodePath, msg);
+                // XXX ReferenceError: mustache is not defined
+                url = mustache.render(url, msg);
             }
             if (!url) {
-                node.error(RED._("httpin.errors.no-url"), msg);
+                node.error(RED._("mackerel.errors.no-path"), msg);
                 node.status({
                     fill: "red",
                     shape: "ring",
-                    text: (RED._("httpin.errors.no-url"))
+                    text: (RED._("mackerel.errors.no-path"))
                 });
                 return;
             }
@@ -62,25 +57,10 @@ module.exports = function (RED) {
                 method: method,
                 url: url,
                 timeout: node.reqTimeout,
-                followRedirect: nodeFollowRedirects,
                 headers: {},
                 encoding: null,
             };
             opts.headers["X-API-Key"] = this.credentials.api_key;
-
-            if (msg.headers) {
-                for (var v in msg.headers) {
-                    if (msg.headers.hasOwnProperty(v)) {
-                        var name = v.toLowerCase();
-                        if (name !== "content-type" && name !== "content-length") {
-                            // only normalise the known headers used later in this
-                            // function. Otherwise leave them alone.
-                            name = v;
-                        }
-                        opts.headers[name] = msg.headers[v];
-                    }
-                }
-            }
 
             if (msg.payload && (method == "POST" || method == "PUT" || method == "PATCH")) {
                 opts.body = JSON.stringify(msg.payload);
@@ -113,7 +93,7 @@ module.exports = function (RED) {
                 } else {
                     msg.payload = body;
                     try { msg.payload = JSON.parse(msg.payload); }
-                    catch (e) { node.warn(RED._("httpin.errors.json-error")); }
+                    catch (e) { node.warn(RED._("mackerel.errors.json-error")); }
                     msg.headers = response.headers;
                     msg.statusCode = response.statusCode;
                     if (node.metric()) {

@@ -14,24 +14,13 @@
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-url"><i class="fa fa-globe"></i> <span data-i18n="mackerel.label.path"></span></label>
-        <input type="text" id="node-input-url" placeholder="/api/v0/">
+        <label for="node-input-path"><i class="fa fa-globe"></i> <span data-i18n="mackerel.label.path"></span></label>
+        <input type="text" id="node-input-path" placeholder="/api/v0/">
     </div>
 
     <div class="form-row">
-        <input type="checkbox" id="node-input-follow-redirects" style="display: inline-block; width: auto; vertical-align: top;">
-        <label for="node-input-follow-redirects" style="width: auto" data-i18n="mackerel.follow-redirects"></label>
-    </div>
-
-    <div class="form-row">
-        <input type="checkbox" id="node-input-api_key" style="display: inline-block; width: auto; vertical-align: top;">
-        <label for="node-input-api_key" style="width: 70%;"><span data-i18n="mackerel.basicauth"></span></label>
-        <div style="margin-left: 20px" class="node-input-api_key-row hide">
-            <div class="form-row">
-                <label for="node-input-api_key"><i class="fa fa-lock"></i> <span data-i18n="common.label.api_key"></span></label>
-                <input type="password" id="node-input-api_key">
-            </div>
-        </div>
+        <label for="node-input-api_key"><i class="fa fa-lock"></i> <span data-i18n="mackerel.label.api_key"></span></label>
+        <input type="password" id="node-input-api_key">
     </div>
 
     <div class="form-row">
@@ -41,19 +30,17 @@
     <div class="form-tips" id="tip-json" hidden><span data-i18n="mackerel.tip.req"></span></div>
 </script>
 
-<script type="text/x-red" data-help-name="www-request">
-    <p>Provides a node for making http requests.</p>
-    <p>The URL and HTTP method can be configured in the node, if they are left blank they should be set in an incoming message on <code>msg.url</code> and <code>msg.method</code>:</p>
+<script type="text/x-red" data-help-name="mackerel">
+    <p>Provides a node for call <a href="https://mackerel.io/ja/api-docs/" target="_blank">Mackerel API</a>.</p>
+    <p>The API and HTTP method can be configured in the node, if they are left blank they should be set in an incoming message on <code>msg.path</code> and <code>msg.method</code>:</p>
     <ul>
-        <li><code>path</code>, if set, is used as the url of the request. Must start with http: or https:</li>
+        <li><code>path</code>, if set, is used as the path of the API.</li>
         <li><code>method</code>, if set, is used as the HTTP method of the request.
         Must be one of <code>GET</code>, <code>PUT</code>, <code>POST</code>, <code>PATCH</code> or <code>DELETE</code> (default: GET)</li>
-        <li><code>headers</code>, if set, should be an object containing field/value
-        pairs to be added as request headers</li>
         <li><code>payload</code> is sent as the body of the request</li>
     </ul>
-    <p>When configured within the node, the URL property can contain <a href="http://mustache.github.io/mustache.5.html" target="_new">mustache-style</a> tags. These allow the
-    url to be constructed using values of the incoming message. For example, if the url is set to
+    <p>When configured within the node, the Path property can contain <a href="http://mustache.github.io/mustache.5.html" target="_new">mustache-style</a> tags. These allow the
+    path to be constructed using values of the incoming message. For example, if the path is set to
     <code>/api/v0/services/{{{serviceName}}}/tsdb</code>, it will have the value of <code>msg.serviceName</code> automatically inserted.
     Using {{{...}}} prevents mustache from escaping characters like / & etc.</p>
     <p>
@@ -68,53 +55,25 @@
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('mackerel',{
+    RED.nodes.registerType('mackerel', {
         category: 'function',
-        color:"rgb(231, 231, 174)",
+        color: "#4dbddb",
         defaults: {
-            name: {value:""},
-            method:{value:"GET"},
-            ret: {value:"txt"},
-            url:{value:""},
-            "follow-redirects":{value:true},
-            tls: {type:"tls-config",required: false}
+            name: { value: "" },
+            method: { value: "GET" },
+            path: { value: "" }
         },
         credentials: {
-            api_key: {type: "password"}
+            api_key: { type: "password" }
         },
-        inputs:1,
-        outputs:1,
-        icon: "white-globe.png",
-        label: function() {
-            return this.name|| "mackerel";
+        inputs: 1,
+        outputs: 1,
+        icon: "mackerel-logo-square-white.png",
+        label: function () {
+            return this.name || "mackerel";
         },
-        labelStyle: function() {
-            return this.name?"node_label_italic":"";
-        },
-        oneditprepare: function() {
-            $("#node-input-api_key").change(function() {
-                if ($(this).is(":checked")) {
-                    $(".node-input-api_key-row").show();
-                } else {
-                    $(".node-input-api_key-row").hide();
-                    $('#node-input-user').val('');
-                    $('#node-input-password').val('');
-                }
-            });
-            if (this.credentials.api_key) {
-                $('#node-input-api_key').prop('checked', true);
-            } else {
-                $('#node-input-api_key').prop('checked', false);
-            }
-            $("#node-input-api_key").change();
-
-            $("#node-input-ret").change(function() {
-                if ($("#node-input-ret").val() === "obj") {
-                    $("#tip-json").show();
-                } else {
-                    $("#tip-json").hide();
-                }
-            });
+        labelStyle: function () {
+            return this.name ? "node_label_italic" : "";
         }
     });
 </script>
