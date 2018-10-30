@@ -12,12 +12,6 @@ Icon was taken from a https://mackerel.io/ja/brand-assets/.
 
 ## Installation
 
-This node was not published to npm.
-
-See: [testing-your-node-in-node-red](https://nodered.org/docs/creating-nodes/first-node#testing-your-node-in-node-red)
-
 ```sh
-git clone https://github.com/7474/node-red-contrib-mackerel.git
-cd node-red-contrib-mackerel
-npm link
+npm i node-red-contrib-mackerel
 ```
