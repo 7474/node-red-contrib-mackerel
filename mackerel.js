@@ -15,6 +15,7 @@ module.exports = function (RED) {
         } else {
             this.reqTimeout = 120000;
         }
+        this.config = RED.nodes.getNode(n.config);
 
         this.on("input", function (msg) {
             var preRequestTimestamp = process.hrtime();
@@ -60,7 +61,7 @@ module.exports = function (RED) {
                 headers: {},
                 encoding: null,
             };
-            opts.headers["X-API-Key"] = this.credentials.api_key;
+            opts.headers["X-API-Key"] = this.config.api_key;
 
             if (msg.payload && (method == "POST" || method == "PUT" || method == "PATCH")) {
                 opts.body = JSON.stringify(msg.payload);
@@ -112,11 +113,21 @@ module.exports = function (RED) {
             })
         });
     }
-    RED.nodes.registerType("mackerel", MackerelNode, {
-        credentials: {
-            api_key: {
-                type: "password"
-            }
+    function MackerelConfig(n) {
+        RED.nodes.createNode(this, n);
+
+        if (this.credentials) {
+            this.api_key = this.credentials.api_key;
         }
+    }
+
+    RED.nodes.registerType("mackerel", MackerelNode, {
+    });
+    RED.nodes.registerType("mackerel-config", MackerelConfig, {
+      credentials: {
+        api_key: {
+            type: "password"
+        }
+      }
     });
 }

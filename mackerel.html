@@ -4,6 +4,11 @@
 
 <script type="text/x-red" data-template-name="mackerel">
     <div class="form-row">
+        <label for="node-input-config"><i class="icon-cog"></i> API Config</label>
+        <input type="text" id="node-input-config" placeholder="API Config">
+    </div>
+
+    <div class="form-row">
         <label for="node-input-method"><i class="fa fa-tasks"></i> <span data-i18n="mackerel.label.method"></span></label>
         <select type="text" id="node-input-method" style="width:70%;">
         <option value="GET">GET</option>
@@ -13,14 +18,10 @@
         <option value="use" data-i18n="mackerel.setby"></option>
         </select>
     </div>
+
     <div class="form-row">
         <label for="node-input-path"><i class="fa fa-globe"></i> <span data-i18n="mackerel.label.path"></span></label>
         <input type="text" id="node-input-path" placeholder="/api/v0/">
-    </div>
-
-    <div class="form-row">
-        <label for="node-input-api_key"><i class="fa fa-lock"></i> <span data-i18n="mackerel.label.api_key"></span></label>
-        <input type="password" id="node-input-api_key">
     </div>
 
     <div class="form-row">
@@ -59,21 +60,45 @@
         category: 'function',
         color: "#4dbddb",
         defaults: {
+            config: { type: "mackerel-config", required: true },
             name: { value: "" },
             method: { value: "GET" },
             path: { value: "" }
-        },
-        credentials: {
-            api_key: { type: "password" }
         },
         inputs: 1,
         outputs: 1,
         icon: "mackerel-logo-square-white.png",
         label: function () {
-            return this.name || "mackerel";
+            return this.name || this.method + " " + this.path;
         },
         labelStyle: function () {
             return this.name ? "node_label_italic" : "";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="mackerel-config">
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-api_key"><i class="icon-tag"></i> API Key</label>
+        <input type="password" id="node-config-input-api_key">
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('mackerel-config', {
+        category: 'config',
+        defaults: {
+            name: { value: "" }
+        },
+        credentials: {
+            api_key: { type: "password" }
+        },
+        label: function () {
+            return this.name + " [" + this.id + "]" || this.id;
         }
     });
 </script>
