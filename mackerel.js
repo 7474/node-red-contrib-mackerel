@@ -2,6 +2,7 @@
 
 let baseUrl = "https://api.mackerelio.com";
 var request = require('request');
+var mustache = require("mustache");
 
 module.exports = function (RED) {
     function MackerelNode(n) {
@@ -30,7 +31,6 @@ module.exports = function (RED) {
                 node.warn(RED._("common.errors.nooverride"));
             }
             if (isTemplatedUrl) {
-                // XXX ReferenceError: mustache is not defined
                 url = mustache.render(url, msg);
             }
             if (!url) {
