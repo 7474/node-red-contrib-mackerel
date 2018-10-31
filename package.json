@@ -7,7 +7,7 @@
         "url": "https://github.com/7474/node-red-contrib-mackerel.git"
     },
     "scripts": {
-      "test": "mocha \"test/**/*_spec.js\""
+        "test": "mocha \"test/**/*_spec.js\""
     },
     "keywords": [
         "node-red",
@@ -25,6 +25,7 @@
         }
     },
     "dependencies": {
+        "mustache": "^3.0.0",
         "request": "^2.88.0"
     },
     "devDependencies": {
